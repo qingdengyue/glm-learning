@@ -66,7 +66,7 @@ def filter_text_msg(messages: MsgList) -> TextMsgList:
 
 ## api ##
 # 智谱开放平台API key，参考 https://open.bigmodel.cn/usercenter/apikeys
-API_KEY: str = os.environ["ZHIPUAI_API_KEY"]
+API_KEY: str = ""
 
 
 class ApiKeyNotSet(ValueError):
@@ -246,8 +246,37 @@ def generate_fake_response(messages: TextMsgList, meta: CharacterMeta) -> Iterat
         time.sleep(0.5)
 
 
+
+#性格选项
+with open('traits.txt', 'r', encoding='utf-8') as file:
+   # 读取所有行
+   lines = file.readlines()
+ 
+# 使用列表推导式去除每行末尾的换行符，并创建列表
+traits_list = [line.strip() for line in lines]
+
+
+#心理词汇
+with open('psychological_traits.txt', 'r', encoding='utf-8') as file:
+   # 读取所有行
+   lines = file.readlines()
+ 
+# 使用列表推导式去除每行末尾的换行符，并创建列表
+psychological_traits_list = [line.strip() for line in lines]
+
+#心情描写
+with open('moods.txt', 'r', encoding='utf-8') as file:
+   # 读取所有行
+   lines = file.readlines()
+ 
+# 使用列表推导式去除每行末尾的换行符，并创建列表
+moods_list = [line.strip() for line in lines]
+ 
+
+
+
 ### UI ###
-st.set_page_config(page_title="CharacterGLM API Demo", page_icon="🤖", layout="wide")
+st.set_page_config(page_title="CharacterGLM Style Demo", page_icon="🤖", layout="wide")
 debug = os.getenv("DEBUG", "").lower() in ("1", "yes", "y", "true", "t", "on")
 
 def update_api_key(key: Optional[str] = None):
@@ -267,10 +296,16 @@ if "history" not in st.session_state:
     st.session_state["history"] = []
 if "meta" not in st.session_state:
     st.session_state["meta"] = {
-        "user_info": "",
         "bot_info": "",
+        "bot_traits":"",
+        "bot_psychological":"",
+        "bot_moods":"",
         "bot_name": "",
-        "user_name": ""
+        "user_info": "",
+        "user_name": "",
+        "user_traits":"",
+        "user_psychological":"",
+        "user_moods":"",
     }
 
 
@@ -292,10 +327,16 @@ with st.container():
     with col1:
         st.text_input(label="角色名", key="bot_name", on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["bot_name"]), help="模型所扮演的角色的名字，不可以为空")
         st.text_area(label="角色人设", key="bot_info", on_change=lambda : st.session_state["meta"].update(bot_info=st.session_state["bot_info"]), help="角色的详细人设信息，不可以为空")
+        st.selectbox(label="性格",key="bot_traits", options=list(traits_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["bot_traits"]),help="性格描写")
+        st.selectbox(label="心理",key="bot_psychological", options=list(psychological_traits_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["bot_psychological"]),help="心理描写")
+        st.selectbox(label="心情",key="bot_moods", options=list(moods_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["bot_moods"]),help="心情描写")
         
     with col2:
         st.text_input(label="用户名", value="用户", key="user_name", on_change=lambda : st.session_state["meta"].update(user_name=st.session_state["user_name"]), help="用户的名字，默认为用户")
         st.text_area(label="用户人设", value="", key="user_info", on_change=lambda : st.session_state["meta"].update(user_info=st.session_state["user_info"]), help="用户的详细人设信息，可以为空")
+        st.selectbox(label="性格",key="user_traits", options=list(traits_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["user_traits"]),help="性格描写")
+        st.selectbox(label="心理",key="user_psychological", options=list(psychological_traits_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["user_psychological"]),help="心理描写")
+        st.selectbox(label="心情",key="user_moods", options=list(moods_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["user_moods"]),help="心情描写")
 
 
 def verify_meta() -> bool:
