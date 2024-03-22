@@ -54,10 +54,16 @@ MsgList = List[Msg]
 
 
 class CharacterMeta(TypedDict):
-    user_info: str  # 用户人设
     bot_info: str   # 角色人设
     bot_name: str   # bot扮演的角色的名字
+    bot_traits: str  # 用户的名字
+    bot_psychological: str  # 用户的名字
+    bot_moods: str  # 用户的名字
+    user_info: str  # 用户人设
     user_name: str  # 用户的名字
+    user_traits: str  # 用户的名字
+    user_psychological: str  # 用户的名字
+    user_moods: str  # 用户的名字
 
 
 def filter_text_msg(messages: MsgList) -> TextMsgList:
@@ -193,6 +199,16 @@ def generate_chat_scene_prompt(messages: TextMsgList, meta: CharacterMeta):
 
 {meta['bot_name']}的人设：
 {meta['bot_info']}
+
+{meta['bot_name']}的性格：
+({meta['bot_traits']})
+
+{meta['bot_name']}的心理：
+({meta['bot_psychological']})
+
+{meta['bot_name']}的心情：
+({meta['bot_moods']})
+
     """.strip()
     
     if meta["user_info"]:
@@ -200,6 +216,16 @@ def generate_chat_scene_prompt(messages: TextMsgList, meta: CharacterMeta):
 
 {meta["user_name"]}的人设：
 {meta["user_info"]}
+
+{meta['user_name']}的性格：
+({meta['user_traits']})
+
+{meta['user_name']}的心理：
+({meta['user_psychological']})
+
+{meta['user_name']}的心情：
+({meta['user_moods']})
+
 """.rstrip()
 
     if messages:
@@ -297,10 +323,10 @@ if "history" not in st.session_state:
 if "meta" not in st.session_state:
     st.session_state["meta"] = {
         "bot_info": "",
+        "bot_name": "",
         "bot_traits":"",
         "bot_psychological":"",
         "bot_moods":"",
-        "bot_name": "",
         "user_info": "",
         "user_name": "",
         "user_traits":"",
@@ -327,16 +353,16 @@ with st.container():
     with col1:
         st.text_input(label="角色名", key="bot_name", on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["bot_name"]), help="模型所扮演的角色的名字，不可以为空")
         st.text_area(label="角色人设", key="bot_info", on_change=lambda : st.session_state["meta"].update(bot_info=st.session_state["bot_info"]), help="角色的详细人设信息，不可以为空")
-        st.selectbox(label="性格",key="bot_traits", options=list(traits_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["bot_traits"]),help="性格描写")
-        st.selectbox(label="心理",key="bot_psychological", options=list(psychological_traits_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["bot_psychological"]),help="心理描写")
-        st.selectbox(label="心情",key="bot_moods", options=list(moods_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["bot_moods"]),help="心情描写")
+        st.selectbox(label="性格",key="bot_traits", options=list(traits_list),on_change=lambda : st.session_state["meta"].update(bot_traits=st.session_state["bot_traits"]),help="性格描写")
+        st.selectbox(label="心理",key="bot_psychological", options=list(psychological_traits_list),on_change=lambda : st.session_state["meta"].update(bot_psychological=st.session_state["bot_psychological"]),help="心理描写")
+        st.selectbox(label="心情",key="bot_moods", options=list(moods_list),on_change=lambda : st.session_state["meta"].update(bot_moods=st.session_state["bot_moods"]),help="心情描写")
         
     with col2:
         st.text_input(label="用户名", value="用户", key="user_name", on_change=lambda : st.session_state["meta"].update(user_name=st.session_state["user_name"]), help="用户的名字，默认为用户")
         st.text_area(label="用户人设", value="", key="user_info", on_change=lambda : st.session_state["meta"].update(user_info=st.session_state["user_info"]), help="用户的详细人设信息，可以为空")
-        st.selectbox(label="性格",key="user_traits", options=list(traits_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["user_traits"]),help="性格描写")
-        st.selectbox(label="心理",key="user_psychological", options=list(psychological_traits_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["user_psychological"]),help="心理描写")
-        st.selectbox(label="心情",key="user_moods", options=list(moods_list),on_change=lambda : st.session_state["meta"].update(bot_name=st.session_state["user_moods"]),help="心情描写")
+        st.selectbox(label="性格",key="user_traits", options=list(traits_list),on_change=lambda : st.session_state["meta"].update(user_traits=st.session_state["user_traits"]),help="性格描写")
+        st.selectbox(label="心理",key="user_psychological", options=list(psychological_traits_list),on_change=lambda : st.session_state["meta"].update(user_psychological=st.session_state["user_psychological"]),help="心理描写")
+        st.selectbox(label="心情",key="user_moods", options=list(moods_list),on_change=lambda : st.session_state["meta"].update(user_moods=st.session_state["user_moods"]),help="心情描写")
 
 
 def verify_meta() -> bool:
@@ -368,7 +394,7 @@ def draw_new_image():
         return
     
     # TODO: 加上风格选项
-    image_prompt = '二次元风格。' + image_prompt.strip()
+    image_prompt = '仙侠风格。' + image_prompt.strip()
     
     print(f"image_prompt = {image_prompt}")
     n_retry = 3
@@ -415,10 +441,16 @@ with st.container():
         clear_meta = st.button(button_labels["clear_meta"], key="clear_meta")
         if clear_meta:
             st.session_state["meta"] = {
-                "user_info": "",
                 "bot_info": "",
                 "bot_name": "",
-                "user_name": ""
+                "bot_traits":"",
+                "bot_psychological":"",
+                "bot_moods":"",
+                "user_info": "",
+                "user_name": "",
+                "user_traits":"",
+                "user_psychological":"",
+                "user_moods":"",
             }
             st.rerun()
 
