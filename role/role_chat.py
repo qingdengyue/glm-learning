@@ -133,7 +133,8 @@ def gen_role_data():
     )
     st.write(f"角色1姓名:{role1_name}")
     st.write(f"角色1设定:{role1_description}")
-    
+    st.session_state["meta"]["role1_name"]=role1_name
+    st.session_state["meta"]["role1_d"]=role1_description
 
     instruction2 = gen_role2_description(st.session_state["meta"])
     role2_description= get_chatglm_response_via_sdk(
@@ -157,6 +158,8 @@ def gen_role_data():
     )
     st.write(f"角色2姓名:{role2_name}")
     st.write(f"角色2设定:{role2_description}")
+    st.session_state["meta"]["role2_name"]=role1_name
+    st.session_state["meta"]["role2_d"]=role1_description
    # ... 更多的角色信息
  
 # 生成对话信息的函数（这里只是一个示例，你需要实现具体的逻辑）
@@ -185,6 +188,7 @@ if "meta" not in st.session_state:
        "role1_name":"角色1名称",
        "role1_s":"角色1性别",
        "role1_description":"角色1描述",
+       "role1_d":"角色1描述",
        "role1_traits":"角色1性格",
        "role1_mood":"角色1心情",
        "role1_personality":"角色1心理",
@@ -193,6 +197,7 @@ if "meta" not in st.session_state:
        "role2_name":"角色2名称",
        "role2_s":"角色2性别",
        "role2_description":"角色2描述",
+       "role2_d":"角色2描述",
        "role2_traits":"角色2性格",
        "role2_mood":"角色2心情",
        "role2_personality":"角色2性格",
