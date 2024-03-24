@@ -28,7 +28,7 @@ streamlit run characterglm-style.py
 ```
 #### 2. 界面说明:
 
-![image](style/image/Snipaste_2024-03-24_19-26-08.png)
+![image](style/image/Snipaste_2024-03-24_19-59-40.png)
 
 ### 角色对话生成
 #### 1. 启动
